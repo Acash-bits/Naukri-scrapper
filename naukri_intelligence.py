@@ -9,7 +9,8 @@ job_urls = {
     'Business Analyst': 'https://www.naukri.com/business-analyst-jobs-in-delhi-ncr?k=business+analyst&l=delhi+%2F+ncr%2C+gurugram%2C+noida&experience=4',
     'Senior Business Analyst': 'https://www.naukri.com/senior-business-analyst-jobs-in-delhi-ncr?k=senior+business+analyst&l=delhi+%2F+ncr%2C+gurugram%2C+noida&experience=4',
     'Data Analyst': 'https://www.naukri.com/data-analyst-jobs-in-delhi-ncr?k=data+analyst&l=delhi+%2F+ncr%2C+gurugram%2C+noida&experience=4',
-    'Product Manager': 'https://www.naukri.com/product-manager-jobs-in-delhi-ncr?k=product+manager&l=delhi+%2F+ncr%2C+gurugram%2C+noida&experience=4'
+    'Product Manager': 'https://www.naukri.com/product-manager-jobs-in-delhi-ncr?k=product+manager&l=delhi+%2F+ncr%2C+gurugram%2C+noida&experience=4',
+    'Strategy Analyst': 'https://www.naukri.com/strategy-analyst-jobs-in-delhi-ncr?k=strategy%20analyst&l=delhi%20%2F%20ncr%2C%20noida%2C%20gurugram&experience=4&nignbevent_src=jobsearchDeskGNB'
 }
 
 # CONFIGURE HOW MANY PAGES TO SCRAPE
@@ -216,7 +217,7 @@ async def scrape_tab(context, category, base_url, max_pages, visit_homepage=True
                 break
             
             # Delay before clicking Next
-            delay = random.uniform(10, 18)
+            delay = random.uniform(5, 10)
             print(f'⏳ Waiting {delay:.1f}s before clicking Next...')
             await asyncio.sleep(delay)
             
