@@ -69,6 +69,8 @@ async def scrape_tab(context, category, base_url, max_pages):
                     experience_tag = job.find('span', class_='exp-wrap')
                     # Location of the job
                     location_tag = job.find('span', class_='loc-wrap')
+                    # Posted Date Tag
+                    posted_date_tag = job.find('span', class_='job-post-day')
                     
                     if title_tag:
                         job_dict = {
@@ -77,6 +79,7 @@ async def scrape_tab(context, category, base_url, max_pages):
                             'Company': company_tag.text.strip() if company_tag else 'N/A',
                             'Experience': experience_tag.text.strip() if experience_tag else 'N/A',
                             'Location': location_tag.text.strip() if location_tag else 'N/A',
+                            'Posted': posted_date_tag.text.strip() if posted_date_tag else 'N/A',
                             'Link': title_tag.get('href', 'N/A')
                         }
                         page_results.append(job_dict)
