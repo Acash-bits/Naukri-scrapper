@@ -67,6 +67,8 @@ async def scrape_current_page(page, category, page_num):
             location_tag = job.find('span', class_='loc-wrap')
             # Job Posting Time
             posting_tag = job.find('span', class_='job-post-day')
+            # Salary Range
+            salary_tag = job.find('span', class_='sal-wrap')
             
             if title_tag:
                 job_dict = {
@@ -76,6 +78,7 @@ async def scrape_current_page(page, category, page_num):
                     'Company': company_tag.text.strip() if company_tag else 'N/A',
                     'Experience': experience_tag.text.strip() if experience_tag else 'N/A',
                     'Location': location_tag.text.strip() if location_tag else 'N/A',
+                    'Salary': salary_tag.text.strip() if salary_tag else 'N/A',
                     'Posted': posting_tag.text.strip() if posting_tag else 'N/A',
                     'Link': title_tag.get('href', 'N/A')
                 }
@@ -171,7 +174,7 @@ async def scrape_tab(context, category, base_url, max_pages, visit_homepage=True
     try:
         # Optional: visit homepage to establish session (recommended for first category)
         if visit_homepage:
-            print(f"   🌐 Visiting homepage to establish session...")
+            print(f"  🌐 Visiting homepage to establish session...")
             await page.goto('https://www.naukri.com/', wait_until="networkidle", timeout=60000)
             await asyncio.sleep(random.uniform(2, 4))
             
