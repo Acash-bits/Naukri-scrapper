@@ -4,6 +4,24 @@ from playwright_stealth import Stealth
 import pandas as pd
 from bs4 import BeautifulSoup
 import random
+import mysql.connector
+from mysql.connector import Error
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv() # Load Environment variables from .env files
+
+
+# Database Configuration
+DB_CONFIG = {
+    'host': os.getenv('HOST'),
+    'user': os.getenv('USER'),
+    'password': os.getenv('PASS'),
+    'database': os.getenv('DATABASE')
+}
+
+
 
 job_urls = {
     'Business Analyst': 'https://www.naukri.com/business-analyst-jobs-in-delhi-ncr?k=business+analyst&l=delhi+%2F+ncr%2C+gurugram%2C+noida&experience=4',
@@ -14,7 +32,7 @@ job_urls = {
 }
 
 # CONFIGURE HOW MANY PAGES TO SCRAPE
-MAX_PAGES = 2  # Set to desired number of pages to scrape per category
+MAX_PAGES = 1  # Set to desired number of pages to scrape per category
 
 def categorize_posting_time(posted_text):
     """Categorize job posting time into defined buckets"""
@@ -368,6 +386,61 @@ async def main():
             print("No job data found. Check the site structure or your selectors or block status")
         
         await browser.close()
+
+
+def init_db_mysql():
+    '''Initialize the MYSQL database and Table'''
+    try:
+        conn = mysql.connector.connect(
+            host=DB_CONFIG['host'],
+            user=DB_CONFIG['user'],
+            password=DB_CONFIG[int('pass')]
+        )
+        cursor=conn.cursor()
+        print("Connection with database has been established successfully")
+    except Error as e:
+        print(f'Error while establishing the connection with MySQL: {e}')
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+def save_job_to_mysql(job_list):
+    """Inserts a job record to MySQL, ignoring duplicates based on URL"""
+    if not job_list:
+        return
+
+    conn = None # Initiliaze to avoid errors in 'finally' if connection fails
+
+    try:
+        conn=mysql.connector.connect(**DB_CONFIG)
+        cursor=conn.cursor()
+
+        # Query to insert the data in batch
+        query = """
+            INSERT IGNORE INTO jobs_postings
+            (category, title, company, location, salary, posted_text, time_bucket, url)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+        
+        # Converting list of dictonaries to a list of tuples (which MySQL expects)
+        data_to_insert = [
+            (j['Category'], j['Title'], j['Company'], j['Location'],
+            j['Salary'], j['Posted'], j['Time Category'], j['Link'])
+            for j in job_list
+        ]
+        # Insert the data using batch insert
+        cursor.executemany(query, data_to_insert)
+        conn.commit()
+        print(f'Successfully saved {cursor.rowcount} new jobs to the database.')
+    
+    # Error handling, printing the error that might get encountered while running the code
+    except Error as e:
+        print(f'Database insert error: {e}')
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
