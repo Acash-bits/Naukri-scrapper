@@ -14,7 +14,7 @@ job_urls = {
 }
 
 # CONFIGURE HOW MANY PAGES TO SCRAPE
-MAX_PAGES = 5  # Set to desired number of pages to scrape per category
+MAX_PAGES = 2  # Set to desired number of pages to scrape per category
 
 async def human_like_behavior(page):
     """Simulate human-like mouse movements and scrolling"""
@@ -52,7 +52,7 @@ async def scrape_current_page(page, category, page_num):
         job_cards = soup.find_all('div', class_='srp-jobtuple-wrapper')
         
         if not job_cards:
-            print(f"      ⚠️ No job cards found on page {page_num}")
+            print(f"⚠️ No job cards found on page {page_num}")
             return []
         
         page_results = []
@@ -239,6 +239,25 @@ async def scrape_tab(context, category, base_url, max_pages, visit_homepage=True
     finally:
         await page.close()
 
+def print_job_details(all_job_data):
+    """Print jo details in custom format"""
+    print("\n" + "="*80)
+    print(f"FOUND {len(all_job_data)} JOBS")
+    print("="*80 + "\n")
+
+    for idx, job in enumerate(all_job_data, 1):
+        print(f"\n{'─'*80}")
+        print(f"JOB #{idx}")
+        print(f"{'─'*80}")
+        print(f"Job Title:       {job['Title']}")
+        print(f"Company Name:    {job['Company']}")
+        print(f"Experience:      {job['Experience']}")
+        print(f"Location:        {job['Location']}")
+        print(f"Posting Time:    {job['Posted']}")
+        print(f"Salary:          {job['Salary']}")
+        print(f"Link:            {job['Link']}")
+        print(f"Page Number:     {job['Page']}")
+        print(f"Category:        {job['Category']}")
 
 async def main():
     async with async_playwright() as p:
@@ -246,7 +265,7 @@ async def main():
         browser = await p.chromium.launch(
             headless=False,
             args=[
-                # '--headless=new', # Uncomment to run in headless mode
+                '--headless=new', # Uncomment to run in headless mode
                 '--disable-blink-features=AutomationControlled',
                 '--disable-dev-shm-usage',
                 '--no-sandbox',
@@ -300,7 +319,6 @@ async def main():
 
         # Display the data in the terminal
         if all_job_data:
-            df = pd.DataFrame(all_job_data)
             
             # Settings to show ALL columns and rows in terminal
             pd.set_option('display.max_rows', None)
@@ -308,16 +326,17 @@ async def main():
             pd.set_option('display.width', 2000)
             pd.set_option('display.max_colwidth', None)
             
-            print("\n" + "="*80)
-            print(f"FOUND {len(all_job_data)} JOBS")
-            print("="*80 + "\n")
+            print_job_details(all_job_data)
 
             # Show summary by category
+            df = pd.DataFrame(all_job_data)
+            print('\n' + "="*80 + "\n")
             print('Summary by Category:')
             print(df.groupby('Category').size())
             print('\n' + "="*80 + "\n")
+            print("\n")
 
-            print(df)
+            
         else:
             print("No job data found. Check the site structure or your selectors or block status")
         
