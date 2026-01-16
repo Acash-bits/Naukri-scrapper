@@ -11,6 +11,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
+import schedule
+import time
 from dotenv import load_dotenv
 
 
@@ -61,7 +63,7 @@ job_urls = {
 }
 
 # CONFIGURE HOW MANY PAGES TO SCRAPE
-MAX_PAGES = 1  # Set to desired number of pages to scrape per category
+MAX_PAGES = 50  # Set to desired number of pages to scrape per category
 
 def categorize_posting_time(posted_text):
     """Categorize job posting time into defined buckets"""
@@ -802,5 +804,42 @@ async def main():
     # After scraping, process and send emails for unsent jobs
     process_and_send_emails()
 
+
+def run_scraper():
+    """Wrapper function to run the scraper"""
+    print("\n" + "🔄" * 40)
+    print(f"Starting scheduled scrape at {datetime.now().strftime('%B %d, %Y at %I:%M:%S %p')}")
+    print("🔄" * 40 + "\n")
+    
+    try:
+        asyncio.run(main())
+        print("\n" + "✅" * 40)
+        print(f"Scrape completed at {datetime.now().strftime('%B %d, %Y at %I:%M:%S %p')}")
+        print("✅" * 40 + "\n")
+    except Exception as e:
+        print(f"\n❌ Error during scheduled scrape: {e}\n")
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    # Configuration
+    SCRAPE_INTERVAL_HOURS = 3  # Run every 6 hours (adjust as needed)
+    RUN_IMMEDIATELY = True      # Set to False if you want to wait for first interval
+    
+    print("=" * 80)
+    print("🤖 JOB SCRAPER SCHEDULER STARTED")
+    print("=" * 80)
+    print(f"⏰ Scraper will run every {SCRAPE_INTERVAL_HOURS} hour(s)")
+    print(f"🕐 Current time: {datetime.now().strftime('%B %d, %Y at %I:%M:%S %p')}")
+    print("=" * 80 + "\n")
+    
+    # Schedule the job
+    schedule.every(SCRAPE_INTERVAL_HOURS).hours.do(run_scraper)
+    
+    # Run immediately on startup (optional)
+    if RUN_IMMEDIATELY:
+        run_scraper()
+    
+    # Keep the script running and check for scheduled tasks
+    print("⏳ Waiting for next scheduled run...\n")
+    while True:
+        schedule.run_pending()
+        time.sleep(60)  # Check every minute
