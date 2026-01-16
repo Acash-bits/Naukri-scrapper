@@ -421,7 +421,7 @@ def save_job_to_mysql(job_list):
         # Query to insert the data in batch
         query = """
             INSERT IGNORE INTO job_postings
-            (category, title, company_name, location, salary, experience, posting_time, time_category, link, page_number)
+            (category, Job_title, company_name, location, salary, experience, posting_time, time_category, link, page_number)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
         
         # Converting list of dictonaries to a list of tuples (which MySQL expects)
@@ -431,8 +431,8 @@ def save_job_to_mysql(job_list):
             j['Title'],
             j['Company'],
             j['Location'],
-            j['Experience'],
             j['Salary'],
+            j['Experience'],
             j['Posted'],
             j['Time Category'],
             j['Link'],
