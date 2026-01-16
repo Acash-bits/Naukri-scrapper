@@ -1,0 +1,23 @@
+# Web Scraping & Automation
+playwright==1.41.2
+playwright-stealth==1.0.6
+beautifulsoup4==4.12.3
+
+# Data Processing
+pandas==2.2.0
+
+# Database
+mysql-connector-python==8.3.0
+
+# Environment & Configuration
+python-dotenv==1.0.1
+
+# Task Scheduling
+schedule==1.2.1
+
+# HTML Parsing
+lxml==5.1.0
+html5lib==1.1
+
+# Additional utilities
+requests==2.31.0
