@@ -71,14 +71,24 @@ def categorize_posting_time(posted_text):
     posted_text_lower = posted_text.lower()
 
     # Just now cateogry: Up to 2 days
-    just_now_keywords = ['hour', 'today', 'just now', '1 day', '2 days']
+    just_now_keywords = ['hour', 'just now']
     if any(keyword in posted_text_lower for keyword in just_now_keywords):
         return 'Posted Just Now'
     
-    # Recent Category: 3 to 7 days (1 Week)
-    recent_keywords = ['3 days', '4 days', '5 days', '6 days', '7 days', '1 week']
-    if any(keyword in posted_text_lower for keyword in recent_keywords):
+    # Within a 2 days category: Today - 2days
+    within_days_keywords = ['today', '1 day', '2 days']
+    if any(keyword in posted_text_lower for keyword in within_days_keywords):
         return 'Recently Posted'
+
+    # Within a 5 days category : 3 to 4 days
+    recent_keywords = ['3 days', '4 days']
+    if any(keyword in posted_text_lower for keyword in recent_keywords):
+        return 'Posted Within 3 - 4 days'
+    
+    # Within this week category: 5 - 7 days (1 week)
+    within_week_keywords = ['5 days', '6 days', '7 days',]
+    if any(keyword in posted_text_lower for keyword in within_week_keywords):
+        return 'Posted This Week'
     
     # Old category: Includes everytime that is after the above mentioned ones
     return 'Old'
@@ -144,19 +154,22 @@ async def scrape_current_page(page, category, page_num):
                 # Categorizing posting time
                 time_category = categorize_posting_time(posting_tag.text.strip() if posting_tag else 'N/A')
                 
-                job_dict = {
-                    'Category': category,
-                    'Page': page_num,
-                    'Title': title_tag.text.strip() if title_tag else 'N/A',
-                    'Company': company_tag.text.strip() if company_tag else 'N/A',
-                    'Experience': experience_tag.text.strip() if experience_tag else 'N/A',
-                    'Location': location_tag.text.strip() if location_tag else 'N/A',
-                    'Salary': salary_tag.text.strip() if salary_tag else 'N/A',
-                    'Time Category': time_category,
-                    'Posted': posting_tag.text.strip() if posting_tag else 'N/A',
-                    'Link': title_tag.get('href', 'N/A')
-                }
-                page_results.append(job_dict)
+                # Filter: Exclude jobs categorized as old
+                if time_category != 'Old':
+
+                    job_dict = {
+                        'Category': category,
+                        'Page': page_num,
+                        'Title': title_tag.text.strip() if title_tag else 'N/A',
+                        'Company': company_tag.text.strip() if company_tag else 'N/A',
+                        'Experience': experience_tag.text.strip() if experience_tag else 'N/A',
+                        'Location': location_tag.text.strip() if location_tag else 'N/A',
+                        'Salary': salary_tag.text.strip() if salary_tag else 'N/A',
+                        'Time Category': time_category,
+                        'Posted': posting_tag.text.strip() if posting_tag else 'N/A',
+                        'Link': title_tag.get('href', 'N/A')
+                    }
+                    page_results.append(job_dict)
         
         print(f"✅ Found {len(page_results)} jobs on page {page_num}")
         return page_results
