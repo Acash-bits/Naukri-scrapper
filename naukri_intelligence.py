@@ -401,7 +401,7 @@ def get_unsent_jobs():
 
         query =''' 
             SELECT job_id, category, job_title, company_name, location, 
-                   salary, experience, posting_time, time_category, link
+                   salary, experience, posting_time, time_category, link, scraped_time
             FROM job_postings
             WHERE email_sent = 0
             ORDER BY scraped_time DESC
@@ -502,6 +502,10 @@ def create_email_html(jobs):
                 background: #6b7280;
                 color: white;
             }}
+            .badge-scraped {{
+                background: #3b82f6;
+                color: white;
+            }}
             .apply-btn {{
                 display: inline-block;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -549,6 +553,15 @@ def create_email_html(jobs):
         elif job['time_category'] == 'Recently Posted':
             badge_class = 'badge-recent'
         
+        # Format scraped time
+        scraped_time = job.get('scraped_time')
+        if scraped_time:
+            if isinstance(scraped_time, str):
+                scraped_time = datetime.strptime(scraped_time, '%Y-%m-%d %H:%M:%S')
+            scraped_time_str = scraped_time.strftime('%B %d, %Y at %I:%M %p')
+        else:
+            scraped_time_str = 'N/A'
+        
         html += f"""
         <div class="job-card">
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
@@ -578,6 +591,12 @@ def create_email_html(jobs):
                 <span class="label">⏰ Posted:</span>
                 <span class="badge {badge_class}">{job['time_category']}</span>
                 <span class="value" style="font-size: 13px; color: #666;">({job['posting_time']})</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="label">🕐 Scraped:</span>
+                <span class="badge badge-scraped">In Database</span>
+                <span class="value" style="font-size: 13px; color: #666;">{scraped_time_str}</span>
             </div>
             
             <a href="{job['link']}" class="apply-btn" target="_blank">
