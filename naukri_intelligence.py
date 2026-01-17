@@ -73,7 +73,7 @@ def categorize_posting_time(posted_text):
     posted_text_lower = posted_text.lower()
 
     # Just now cateogry: Up to 2 days
-    just_now_keywords = ['hour', 'just now']
+    just_now_keywords = ['hour', 'just now', 'hours']
     if any(keyword in posted_text_lower for keyword in just_now_keywords):
         return 'Posted Just Now'
     
