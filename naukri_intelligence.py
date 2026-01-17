@@ -423,7 +423,7 @@ def get_unsent_jobs():
 
 
 def create_email_html(jobs):
-    """Create a nicely formatted HTML email with job listings"""
+    """Create a nicely formatted HTML email with scrollable job listings"""
     
     html = f"""
     <!DOCTYPE html>
@@ -437,6 +437,7 @@ def create_email_html(jobs):
                 max-width: 900px;
                 margin: 0 auto;
                 padding: 20px;
+                background-color: #f5f5f5;
             }}
             .header {{
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -444,13 +445,48 @@ def create_email_html(jobs):
                 padding: 30px;
                 border-radius: 10px;
                 text-align: center;
-                margin-bottom: 30px;
+                margin-bottom: 20px;
+            }}
+            .jobs-container {{
+                max-height: 600px;
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding: 15px;
+                background: #fafafa;
+                border-radius: 10px;
+                border: 2px solid #e0e0e0;
+                margin-bottom: 20px;
+            }}
+            /* Custom scrollbar styling */
+            .jobs-container::-webkit-scrollbar {{
+                width: 12px;
+            }}
+            .jobs-container::-webkit-scrollbar-track {{
+                background: #f1f1f1;
+                border-radius: 10px;
+            }}
+            .jobs-container::-webkit-scrollbar-thumb {{
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 10px;
+            }}
+            .jobs-container::-webkit-scrollbar-thumb:hover {{
+                background: #764ba2;
+            }}
+            .scroll-indicator {{
+                text-align: center;
+                padding: 10px;
+                background: #fff3cd;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                color: #856404;
+                font-weight: 600;
+                border: 1px solid #ffeaa7;
             }}
             .job-card {{
                 border: 1px solid #e0e0e0;
                 border-radius: 8px;
                 padding: 20px;
-                margin-bottom: 20px;
+                margin-bottom: 15px;
                 background: white;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                 transition: transform 0.2s;
@@ -518,12 +554,16 @@ def create_email_html(jobs):
                 font-weight: 600;
                 margin-top: 15px;
             }}
+            .apply-btn:hover {{
+                opacity: 0.9;
+            }}
             .footer {{
                 text-align: center;
                 color: #666;
                 padding: 20px;
-                margin-top: 30px;
                 border-top: 2px solid #e0e0e0;
+                background: white;
+                border-radius: 8px;
             }}
             .category-tag {{
                 background: #f3f4f6;
@@ -532,6 +572,14 @@ def create_email_html(jobs):
                 font-size: 13px;
                 color: #4b5563;
                 font-weight: 600;
+            }}
+            .stats-bar {{
+                background: white;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                text-align: center;
+                border: 1px solid #e0e0e0;
             }}
         </style>
     </head>
@@ -545,6 +593,22 @@ def create_email_html(jobs):
                 {datetime.now().strftime('%B %d, %Y at %I:%M %p')}
             </p>
         </div>
+        
+        <div class="stats-bar">
+            <strong>📊 Total Jobs Found: {len(jobs)}</strong>
+            <span style="margin: 0 15px;">|</span>
+            <span style="color: #10b981;">● New</span>
+            <span style="margin: 0 15px;">|</span>
+            <span style="color: #f59e0b;">● Recent</span>
+            <span style="margin: 0 15px;">|</span>
+            <span style="color: #3b82f6;">● In Database</span>
+        </div>
+        
+        <div class="scroll-indicator">
+            ⬇️ Scroll down to see all {len(jobs)} job listings ⬇️
+        </div>
+        
+        <div class="jobs-container">
     """
     
     for idx, job in enumerate(jobs, 1):
@@ -565,49 +629,51 @@ def create_email_html(jobs):
             scraped_time_str = 'N/A'
         
         html += f"""
-        <div class="job-card">
-            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
-                <div>
-                    <div class="job-title">{job['job_title']}</div>
-                    <div class="company">{job['company_name']}</div>
+            <div class="job-card">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                    <div>
+                        <div class="job-title">#{idx} - {job['job_title']}</div>
+                        <div class="company">{job['company_name']}</div>
+                    </div>
+                    <span class="category-tag">{job['category']}</span>
                 </div>
-                <span class="category-tag">{job['category']}</span>
+                
+                <div class="detail-row">
+                    <span class="label">📍 Location:</span>
+                    <span class="value">{job['location']}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="label">💼 Experience:</span>
+                    <span class="value">{job['experience']}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="label">💰 Salary:</span>
+                    <span class="value">{job['salary']}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="label">⏰ Posted:</span>
+                    <span class="badge {badge_class}">{job['time_category']}</span>
+                    <span class="value" style="font-size: 13px; color: #666;">({job['posting_time']})</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="label">🕐 Scraped:</span>
+                    <span class="badge badge-scraped">In Database</span>
+                    <span class="value" style="font-size: 13px; color: #666;">{scraped_time_str}</span>
+                </div>
+                
+                <a href="{job['link']}" class="apply-btn" target="_blank">
+                    View Job Details →
+                </a>
             </div>
-            
-            <div class="detail-row">
-                <span class="label">📍 Location:</span>
-                <span class="value">{job['location']}</span>
-            </div>
-            
-            <div class="detail-row">
-                <span class="label">💼 Experience:</span>
-                <span class="value">{job['experience']}</span>
-            </div>
-            
-            <div class="detail-row">
-                <span class="label">💰 Salary:</span>
-                <span class="value">{job['salary']}</span>
-            </div>
-            
-            <div class="detail-row">
-                <span class="label">⏰ Posted:</span>
-                <span class="badge {badge_class}">{job['time_category']}</span>
-                <span class="value" style="font-size: 13px; color: #666;">({job['posting_time']})</span>
-            </div>
-            
-            <div class="detail-row">
-                <span class="label">🕐 Scraped:</span>
-                <span class="badge badge-scraped">In Database</span>
-                <span class="value" style="font-size: 13px; color: #666;">{scraped_time_str}</span>
-            </div>
-            
-            <a href="{job['link']}" class="apply-btn" target="_blank">
-                View Job Details →
-            </a>
-        </div>
         """
     
     html += """
+        </div>
+        
         <div class="footer">
             <p><strong>Job Alert System</strong></p>
             <p style="font-size: 14px; color: #888; margin-top: 10px;">
@@ -654,9 +720,10 @@ def send_job_emails(jobs):
             server.login(EMAIL_CONFIG['sender_email'], EMAIL_CONFIG['sender_password'])
             server.send_message(msg)
 
-        print('===='*80)
+        print('='*80)
         print(f'Email sent successfully to {EMAIL_CONFIG["recipient_email"]} with {len(jobs)} job listings!')
-        print('===='*80)
+        print('='*80)
+        return True
     except Exception as e:
         print(f'Error sending email: {e}')
         return False
