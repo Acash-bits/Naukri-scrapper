@@ -84,7 +84,7 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/naukri-job-scraper.git
+git clone https://github.com/Acash_bits/naukri-job-scraper.git
 cd naukri-job-scraper
 ```
 
@@ -298,14 +298,14 @@ naukri-job-scraper/
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  1. Launch Chromium Browser (Stealth Mode)                  │
-│  2. Visit Naukri.com Homepage (Session Establishment)        │
+│  2. Visit Naukri.com Homepage (Session Establishment)       │
 │  3. Navigate to Each Job Category URL                       │
 │  4. For Each Page:                                          │
-│     ├─ Simulate Human Behavior (Scrolling, Mouse Movement) │
-│     ├─ Parse Job Listings with BeautifulSoup               │
-│     ├─ Extract: Title, Company, Location, Salary, etc.     │
-│     ├─ Filter by Time Category (Exclude "Old" Jobs)        │
-│     └─ Click "Next" Button to Navigate                     │
+│     ├─ Simulate Human Behavior (Scrolling, Mouse Movement)  │
+│     ├─ Parse Job Listings with BeautifulSoup                │
+│     ├─ Extract: Title, Company, Location, Salary, etc.      │
+│     ├─ Filter by Time Category (Exclude "Old" Jobs)         │
+│     └─ Click "Next" Button to Navigate                      │
 │  5. Store Results in MySQL Database                         │
 │  6. Send Email Alerts for New Jobs                          │
 └─────────────────────────────────────────────────────────────┘
@@ -331,11 +331,11 @@ The database uses a **UNIQUE constraint** on the `link` column. If a job URL alr
 
 ```
 ┌─────────────────────────────────────────────┐
-│  1. Query database for unsent jobs         │
-│     (WHERE email_sent = 0)                 │
-│  2. Generate HTML email with job cards     │
-│  3. Send via SMTP (Gmail)                  │
-│  4. Mark jobs as sent (email_sent = 1)     │
+│  1. Query database for unsent jobs          │
+│     (WHERE email_sent = 0)                  │
+│  2. Generate HTML email with job cards      │
+│  3. Send via SMTP (Gmail)                   │
+│  4. Mark jobs as sent (email_sent = 1)      │
 └─────────────────────────────────────────────┘
 ```
 
@@ -529,7 +529,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ```
 MIT License
 
-Copyright (c) 2026 Your Name
+Copyright (c) 2026 Acash_bits
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -569,9 +569,10 @@ This project is for **educational purposes only**.
 ## 📞 Support
 
 ### Getting Help
-- **Issues**: [GitHub Issues](https://github.com/yourusername/naukri-job-scraper/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/naukri-job-scraper/discussions)
-- **Email**: your.email@example.com
+- **Issues**: [GitHub Issues](https://github.com/Acash-bits/naukri-scraper/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Acash-bits/naukri-scraper/discussions)
+- **Email**: akashwillstudy@gmail.com
+
 
 ### Useful Resources
 - [Playwright Documentation](https://playwright.dev/python/)
@@ -592,19 +593,19 @@ This project is for **educational purposes only**.
 
 ## 📊 Project Stats
 
-![GitHub stars](https://img.shields.io/github/stars/yourusername/naukri-job-scraper?style=social)
-![GitHub forks](https://img.shields.io/github/forks/yourusername/naukri-job-scraper?style=social)
-![GitHub issues](https://img.shields.io/github/issues/yourusername/naukri-job-scraper)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/naukri-job-scraper)
+![GitHub stars](https://img.shields.io/github/stars/Acash-bits/naukri-scraper?style=social)
+![GitHub forks](https://img.shields.io/github/forks/Acash-bits/naukri-scraper?style=social)
+![GitHub issues](https://img.shields.io/github/issues/Acash-bits/naukri-scraper)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Acash-bits/naukri-scraper)
 
 ---
 
 <div align="center">
 
-**Made with ❤️ by [Your Name](https://github.com/yourusername)**
+**Made with ❤️ by [Acash_bits](https://github.com/Acash_bits)**
 
 **⭐ Star this repository if you found it helpful!**
 
-[Report Bug](https://github.com/yourusername/naukri-job-scraper/issues) · [Request Feature](https://github.com/yourusername/naukri-job-scraper/issues)
+[Report Bug](https://github.com/Acash-bits/naukri-scraper/issues) · [Request Feature](https://github.com/Acash-bits/naukri-scraper/issues)
 
 </div>
